@@ -1,24 +1,34 @@
 const Quiz = require("../models/quiz");
+const { nanoid } = require("nanoid");
 
 module.exports.createQuiz = async (req, res) => {
     try {
+        let quizCode = nanoid(8);
+        let quiz = await Quiz.findOne({ code: quizCode });
+        while (quiz) {
+            quizCode = nanoid(8);
+            quiz = await Quiz.findOne({ code: quizCode });
+        }
+        req.body.code = quizCode;
         const newQuiz = await Quiz.create(req.body);
-        console.log(newQuiz);
-        res.send(newQuiz);
+        res.json({ message: "Quiz created Successully", quizCode: quizCode });
     } catch (err) {
         console.log(err);
+        res.json({ error: "Internal Server Error" });
     }
 };
 
 module.exports.fetchQuiz = async (req, res) => {
     try {
         const quizCode = req.params.quizCode;
+
         const quiz = await Quiz.findOne({ code: quizCode });
         if (!quiz) {
-            return res.status(404).send({ message: "Quiz not found" });
+            return res.json({ error: "Quiz Not Found" });
         }
         res.json({ data: quiz });
     } catch (err) {
-        consle.log(err);
+        console.log(err);
+        res.json({ error: "Internal Server Error" });
     }
 };

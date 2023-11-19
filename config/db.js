@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
+const env = require("../env");
+
 const db = async () => {
     try {
-        await mongoose.connect(
-            "mongodb+srv://holmes0273:RBDn9h5Dn7wugk8f@quiz-app.ahva1l5.mongodb.net/?retryWrites=true&w=majority"
-        );
+        await mongoose.connect(env.mongoDB_URL);
         console.log(
             `Successfully Connected to DataBase ${mongoose.connection.host}`
         );
