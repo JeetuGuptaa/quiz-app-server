@@ -3,14 +3,20 @@ const { nanoid } = require("nanoid");
 
 module.exports.createQuiz = async (req, res) => {
     try {
+        console.log(req.body);
         let quizCode = nanoid(8);
         let quiz = await Quiz.findOne({ code: quizCode });
         while (quiz) {
             quizCode = nanoid(8);
             quiz = await Quiz.findOne({ code: quizCode });
         }
-        req.body.code = quizCode;
-        const newQuiz = await Quiz.create(req.body);
+        const data = {
+            questions: req.body,
+            code: quizCode,
+        };
+
+        const newQuiz = await Quiz.create(data);
+        console.log(newQuiz);
         res.json({ message: "Quiz created Successully", quizCode: quizCode });
     } catch (err) {
         console.log(err);
